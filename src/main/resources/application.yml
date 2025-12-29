@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: KnowNote
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/db_knownote?useUnicode=true&characterEncoding=utf8&serverTimezone=${TIME_TIMEZONE:Asia/Shanghai}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: ${TIME_TIMEZONE:Asia/Shanghai}
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: ${JWT_SECRET:knownote-dev-secret-key-change-in-production}
+  expiration: 900000
+  refresh-expiration: 604800000
+
+oss:
+  endpoint: ${OSS_ENDPOINT:}
+  bucket: ${OSS_BUCKET:}
+  access-key-id: ${OSS_ACCESS_KEY_ID:}
+  secret-access-key: ${OSS_SECRET_ACCESS_KEY:}
+
+resend:
+  api-key: ${RESEND_API_KEY:}
+  from: ${RESEND_FROM:}
+
+google:
+  client-id: ${GOOGLE_CLIENT_ID:}
+
+time:
+  timezone: ${TIME_TIMEZONE:Asia/Shanghai}

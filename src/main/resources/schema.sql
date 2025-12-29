@@ -1,0 +1,13 @@
+-- KnowNote 用户表
+CREATE TABLE IF NOT EXISTS `user` (
+    `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL UNIQUE COMMENT '邮箱',
+    `username` VARCHAR(13) UNIQUE COMMENT '用户ID，最长13字符',
+    `nickname` VARCHAR(64) COMMENT '昵称',
+    `password_hash` VARCHAR(255) COMMENT '密码哈希（BCrypt）',
+    `google_id` VARCHAR(255) UNIQUE COMMENT 'Google OpenID',
+    `avatar` VARCHAR(512) COMMENT '头像URL',
+    `bio` VARCHAR(200) COMMENT '个人简介',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
