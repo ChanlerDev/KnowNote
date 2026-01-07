@@ -3,6 +3,7 @@ package dev.chanler.knownote.storage.domain.enums;
 import dev.chanler.knownote.common.BizException;
 import dev.chanler.knownote.common.ErrorCode;
 import dev.chanler.knownote.common.UserContext;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.time.Instant;
  * oss 场景
  */
 @Getter
+@AllArgsConstructor
 public enum UploadScene {
     USER_AVATAR("user_avatar", "用户头像"),
     POST_COVER("post_cover", "帖子封面"),
@@ -19,11 +21,6 @@ public enum UploadScene {
 
     private final String scene;
     private final String description;
-
-    UploadScene(String scene, String description) {
-        this.scene = scene;
-        this.description = description;
-    }
 
     /**
      * 根据场景字符串获取枚举
