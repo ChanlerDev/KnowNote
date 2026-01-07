@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "oss")
 public class OssProperties {
     private String endpoint;
-    private String bucket;
+    private String publicUrl;
+    private String publicBucket;
+    private String privateBucket;
     private String accessKeyId;
     private String secretAccessKey;
 }

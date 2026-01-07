@@ -28,7 +28,9 @@ jwt:
 
 oss:
   endpoint: ${OSS_ENDPOINT:}
-  bucket: ${OSS_BUCKET:}
+  public-url: ${OSS_PUBLIC_URL:}
+  public-bucket: ${OSS_PUBLIC_BUCKET:}
+  private-bucket: ${OSS_PRIVATE_BUCKET:}
   access-key-id: ${OSS_ACCESS_KEY_ID:}
   secret-access-key: ${OSS_SECRET_ACCESS_KEY:}
 
