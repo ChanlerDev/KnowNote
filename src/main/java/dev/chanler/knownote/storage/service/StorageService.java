@@ -38,20 +38,6 @@ public class StorageService {
         return scene.isPublic() ? ossProperties.getPublicBucket() : ossProperties.getPrivateBucket();
     }
 
-    /**
-     * 获取私有 bucket
-     */
-    public String getPrivateBucket() {
-        return ossProperties.getPrivateBucket();
-    }
-
-    /**
-     * 获取公开 bucket
-     */
-    public String getPublicBucket() {
-        return ossProperties.getPublicBucket();
-    }
-
     public UploadUrlRespDTO getUploadUrl(UploadUrlReqDTO req) {
         UploadScene uploadScene = UploadScene.fromScene(req.getScene());
 
@@ -153,13 +139,6 @@ public class StorageService {
     }
 
     /**
-     * 删除单个对象（私有 bucket）
-     */
-    public void deleteObject(String key) {
-        deleteObject(ossProperties.getPrivateBucket(), key);
-    }
-
-    /**
      * 删除公开 bucket 对象
      */
     public void deletePublicObject(String key) {
@@ -169,7 +148,7 @@ public class StorageService {
     /**
      * 删除对象
      */
-    public void deleteObject(String bucket, String key) {
+    private void deleteObject(String bucket, String key) {
         try {
             DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(bucket)

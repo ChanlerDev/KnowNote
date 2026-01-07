@@ -11,7 +11,6 @@ import lombok.Getter;
 public enum PostStatus {
     DRAFT("draft"),
     REVIEWING("reviewing"),
-    REJECTED("rejected"),
     PUBLISHED("published"),
     DELETED("deleted");
 

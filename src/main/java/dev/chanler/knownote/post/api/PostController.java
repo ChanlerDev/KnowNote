@@ -1,6 +1,7 @@
 package dev.chanler.knownote.post.api;
 
 import dev.chanler.knownote.common.Result;
+import dev.chanler.knownote.post.api.dto.req.RollbackVersionReqDTO;
 import dev.chanler.knownote.post.api.dto.req.SavePostContentReqDTO;
 import dev.chanler.knownote.post.api.dto.req.SavePostMetadataReqDTO;
 import dev.chanler.knownote.post.api.dto.resp.CreatePostRespDTO;
@@ -44,6 +45,12 @@ public class PostController {
         return Result.ok();
     }
 
+    @PostMapping("/{postId}/unpublish")
+    public Result<Void> unpublishPost(@PathVariable Long postId) {
+        postService.unpublishPost(postId);
+        return Result.ok();
+    }
+
     @GetMapping("/{postId}")
     public Result<PostRespDTO> getPost(@PathVariable Long postId) {
         return Result.ok(postService.getPost(postId));
@@ -58,5 +65,11 @@ public class PostController {
     @GetMapping("/{postId}/versions")
     public Result<PostVersionRespDTO> getVersions(@PathVariable Long postId) {
         return Result.ok(postService.getVersions(postId));
+    }
+
+    @PostMapping("/{postId}/rollback")
+    public Result<Void> rollbackPost(@PathVariable Long postId, @Valid @RequestBody RollbackVersionReqDTO req) {
+        postService.rollbackPost(postId, req);
+        return Result.ok();
     }
 }

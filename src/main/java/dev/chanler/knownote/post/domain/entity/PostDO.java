@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import dev.chanler.knownote.post.domain.enums.PostStatus;
 import dev.chanler.knownote.post.domain.enums.PostType;
-import dev.chanler.knownote.post.domain.enums.PostVisibility;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,13 +29,14 @@ public class PostDO {
     private String description;
     private String tags;
     private String coverUrl;
-    private PostVisibility visibility;
     private Integer isTop;
 
     private String contentUrl;
     private String contentSha256;
 
     private String rejectReason;
+    private String imgUrls;
+    private String publishedVersion;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

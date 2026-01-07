@@ -2,7 +2,7 @@ package dev.chanler.knownote.post.api.dto.resp;
 
 import dev.chanler.knownote.post.domain.enums.PostStatus;
 import dev.chanler.knownote.post.domain.enums.PostType;
-import dev.chanler.knownote.post.domain.enums.PostVisibility;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -21,10 +21,11 @@ public class PostRespDTO {
     private String description;
     private String tags;
     private String coverUrl;
-    private PostVisibility visibility;
     private Integer isTop;
 
     private String contentUrl;
+    private String imgUrls;
+    private String publishedVersion;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

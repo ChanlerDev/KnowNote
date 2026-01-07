@@ -1,11 +1,13 @@
 package dev.chanler.knownote.post.service;
 
+import dev.chanler.knownote.post.api.dto.req.RollbackVersionReqDTO;
 import dev.chanler.knownote.post.api.dto.req.SavePostContentReqDTO;
 import dev.chanler.knownote.post.api.dto.req.SavePostMetadataReqDTO;
 import dev.chanler.knownote.post.api.dto.resp.CreatePostRespDTO;
 import dev.chanler.knownote.post.api.dto.resp.PostRespDTO;
 import dev.chanler.knownote.post.api.dto.resp.PostVersionRespDTO;
 import dev.chanler.knownote.post.domain.entity.PostDO;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -35,6 +37,11 @@ public interface PostService {
     void publishPost(Long postId);
 
     /**
+     * 下线帖子
+     */
+    void unpublishPost(Long postId);
+
+    /**
      * 获取帖子状态
      */
     PostRespDTO getPost(Long postId);
@@ -48,4 +55,9 @@ public interface PostService {
      * 获取帖子版本历史
      */
     PostVersionRespDTO getVersions(Long postId);
+
+    /**
+     * 回滚帖子到指定版本
+     */
+    void rollbackPost(Long postId, RollbackVersionReqDTO req);
 }
