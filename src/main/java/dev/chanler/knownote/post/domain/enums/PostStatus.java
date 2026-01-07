@@ -1,0 +1,19 @@
+package dev.chanler.knownote.post.domain.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * 帖子状态
+ */
+@Getter
+@AllArgsConstructor
+public enum PostStatus {
+    DRAFT("draft"),
+    REVIEWING("reviewing"),
+    REJECTED("rejected"),
+    PUBLISHED("published"),
+    DELETED("deleted");
+
+    private final String status;
+}
