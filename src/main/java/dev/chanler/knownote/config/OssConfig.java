@@ -26,4 +26,14 @@ public class OssConfig {
                 AwsBasicCredentials.create(ossProperties.getAccessKeyId(), ossProperties.getSecretAccessKey())))
             .build();
     }
+
+    @Bean
+    public S3Client createS3Client() {
+        return S3Client.builder()
+            .endpointOverride(URI.create(ossProperties.getEndpoint()))
+            .region(Region.of("auto"))
+            .credentialsProvider(StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(ossProperties.getAccessKeyId(), ossProperties.getSecretAccessKey())))
+            .build();
+    }
 }
