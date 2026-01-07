@@ -52,11 +52,19 @@ public class AuthController {
     }
 
     /**
-     * Google 登录
+     * Google 登录（One Tap / ID Token 方式）
      */
     @PostMapping("/login/google")
     public Result<TokenRespDTO> loginByGoogle(@Valid @RequestBody GoogleLoginReqDTO req) {
         return Result.ok(authService.loginByGoogle(req));
+    }
+
+    /**
+     * Google 登录（OAuth Callback / 授权码方式）
+     */
+    @PostMapping("/google/callback")
+    public Result<TokenRespDTO> loginByGoogleCallback(@Valid @RequestBody GoogleCallbackReqDTO req) {
+        return Result.ok(authService.loginByGoogleCallback(req));
     }
 
     /**

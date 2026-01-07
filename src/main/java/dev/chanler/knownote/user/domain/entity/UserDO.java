@@ -1,5 +1,8 @@
 package dev.chanler.knownote.user.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +17,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("user")
 public class UserDO {
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 邮箱，唯一

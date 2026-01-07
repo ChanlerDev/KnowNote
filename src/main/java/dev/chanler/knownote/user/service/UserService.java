@@ -1,5 +1,6 @@
 package dev.chanler.knownote.user.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import dev.chanler.knownote.common.BizException;
 import dev.chanler.knownote.common.ErrorCode;
 import dev.chanler.knownote.common.PasswordEncoder;
@@ -10,42 +11,36 @@ import dev.chanler.knownote.user.api.dto.req.UpdateProfileReqDTO;
 import dev.chanler.knownote.user.api.dto.resp.UserMeRespDTO;
 import dev.chanler.knownote.user.domain.entity.UserDO;
 import dev.chanler.knownote.user.domain.mapper.UserMapper;
+import dev.chanler.knownote.user.service.GoogleAuthClient.GoogleUserInfo;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * 用户服务
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${google.client-id:}")
-    private String googleClientId;
-
-    private static final String GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+    private final GoogleAuthClient googleAuthClient;
 
     public UserDO getById(Long id) {
-        return userMapper.findById(id)
+        return Optional.ofNullable(userMapper.selectById(id))
                 .orElseThrow(() -> new BizException(ErrorCode.CLIENT_ERROR, "用户不存在"));
     }
 
     public UserDO getByUsername(String username) {
-        return userMapper.findByUsername(username)
+        return Optional.ofNullable(userMapper.selectOne(
+                        new LambdaQueryWrapper<UserDO>().eq(UserDO::getUsername, username)))
                 .orElseThrow(() -> new BizException(ErrorCode.CLIENT_ERROR, "用户不存在"));
     }
 
@@ -87,7 +82,7 @@ public class UserService {
         }
 
         user.setUpdatedAt(LocalDateTime.now());
-        userMapper.update(user);
+        userMapper.updateById(user);
     }
 
     /**
@@ -97,7 +92,6 @@ public class UserService {
         Long userId = UserContext.getUserId();
         UserDO user = getById(userId);
 
-        // 已有密码需验证原密码
         if (user.getPasswordHash() != null) {
             if (StrUtil.isBlank(req.getOldPassword())) {
                 throw new BizException(ErrorCode.CLIENT_ERROR, "请输入原密码");
@@ -109,7 +103,7 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(req.getNewPassword()));
         user.setUpdatedAt(LocalDateTime.now());
-        userMapper.update(user);
+        userMapper.updateById(user);
     }
 
     /**
@@ -123,39 +117,16 @@ public class UserService {
             throw new BizException(ErrorCode.CLIENT_ERROR, "当前账号已绑定 Google");
         }
 
-        GoogleUserInfo googleUser = verifyGoogleToken(req.getIdToken());
+        GoogleUserInfo googleUser = googleAuthClient.verifyIdToken(req.getIdToken());
 
-        if (userMapper.findByGoogleId(googleUser.googleId()).isPresent()) {
+        UserDO existingUser = userMapper.selectOne(
+                new LambdaQueryWrapper<UserDO>().eq(UserDO::getGoogleId, googleUser.googleId()));
+        if (existingUser != null) {
             throw new BizException(ErrorCode.CLIENT_ERROR, "该 Google 账号已绑定其他用户");
         }
 
         user.setGoogleId(googleUser.googleId());
         user.setUpdatedAt(LocalDateTime.now());
-        userMapper.update(user);
+        userMapper.updateById(user);
     }
-
-    private GoogleUserInfo verifyGoogleToken(String idToken) {
-        try {
-            String response = HttpUtil.get(GOOGLE_TOKEN_INFO_URL + idToken);
-            var json = JSONUtil.parseObj(response);
-
-            String aud = json.getStr("aud");
-            if (StrUtil.isNotBlank(googleClientId) && !googleClientId.equals(aud)) {
-                throw new BizException(ErrorCode.CLIENT_ERROR, "Google 认证失败");
-            }
-
-            return new GoogleUserInfo(
-                    json.getStr("sub"),
-                    json.getStr("email"),
-                    json.getStr("name")
-            );
-        } catch (BizException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Google token 验证失败", e);
-            throw new BizException(ErrorCode.THIRD_PARTY_ERROR, "Google 认证失败");
-        }
-    }
-
-    private record GoogleUserInfo(String googleId, String email, String name) {}
 }
