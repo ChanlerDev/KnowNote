@@ -3,7 +3,10 @@ package dev.chanler.knownote.storage.service;
 import cn.hutool.core.util.StrUtil;
 import dev.chanler.knownote.common.BizException;
 import dev.chanler.knownote.common.ErrorCode;
+import dev.chanler.knownote.common.UserContext;
 import dev.chanler.knownote.config.OssProperties;
+import dev.chanler.knownote.post.domain.entity.PostDO;
+import dev.chanler.knownote.post.domain.mapper.PostMapper;
 import dev.chanler.knownote.storage.api.dto.req.UploadUrlReqDTO;
 import dev.chanler.knownote.storage.api.dto.resp.UploadUrlRespDTO;
 import dev.chanler.knownote.storage.domain.enums.UploadScene;
@@ -30,6 +33,7 @@ public class StorageService {
     private final OssProperties ossProperties;
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
+    private final PostMapper postMapper;
 
     /**
      * 根据场景获取 bucket
@@ -42,7 +46,11 @@ public class StorageService {
         UploadScene uploadScene = UploadScene.fromScene(req.getScene());
 
         if (uploadScene != UploadScene.USER_AVATAR) {
-            // TODO: 校验资源 ID 是否属于当前用户
+            Long postId = Long.parseLong(req.getResourceId());
+            PostDO post = postMapper.selectById(postId);
+            if (post == null || !post.getCreatorId().equals(UserContext.getUserId())) {
+                throw new BizException(ErrorCode.CLIENT_ERROR, "无权操作此资源");
+            }
         }
 
         String bucket = getBucket(uploadScene);
