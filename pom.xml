@@ -67,6 +67,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- AOP：用于 @QueuedAsync 切面 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <!-- RocketMQ：消息队列 -->
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
@@ -103,6 +108,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.8.34</version>
+        </dependency>
+        <!-- OkHttp：Tavily API 调用 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
         <!-- AWS SDK for Java：S3 兼容的对象存储（Cloudflare R2） -->
         <dependency>

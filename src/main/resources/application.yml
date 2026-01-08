@@ -39,6 +39,36 @@ review-ai:
   model: ${REVIEW_AI_MODEL:}
   enabled: true
 
+tavily:
+  api-key: ${TAVILY_API_KEY:}
+  base-url: ${TAVILY_BASE_URL:https://api.tavily.com}
+
+research:
+  model:
+    id: ${RESEARCH_MODEL_ID:default}
+    name: ${RESEARCH_MODEL_NAME:default}
+    model: ${RESEARCH_MODEL:}
+    base-url: ${RESEARCH_MODEL_BASE_URL:}
+    api-key: ${RESEARCH_MODEL_API_KEY:}
+  async:
+    max-pool-size: 10
+    queue-capacity: 50
+    task-timeout-minutes: 3
+  budget:
+    levels:
+      MEDIUM:
+        max-conduct-count: 2
+        max-search-count: 2
+        max-concurrent-units: 1
+      HIGH:
+        max-conduct-count: 4
+        max-search-count: 3
+        max-concurrent-units: 2
+      ULTRA:
+        max-conduct-count: 6
+        max-search-count: 4
+        max-concurrent-units: 3
+
 oss:
   endpoint: ${OSS_ENDPOINT:}
   public-url: ${OSS_PUBLIC_URL:}
