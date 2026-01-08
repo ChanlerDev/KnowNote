@@ -30,13 +30,20 @@ public interface ContentReviewer {
             
             ## 返回格式
             
-            返回 JSON：{"approved": boolean, "rejectedReason": string|null}
+            返回 JSON：{"approved": boolean, "rejectedReason": string, "description": string}
 
-            rejectedReason 撰写要求（仅拒绝时填写）：
+            rejectedReason 撰写要求（仅拒绝时填写，不适用时返回空字符串）：
             - 一句话说明问题，不超过50字
             - 语气平和专业，如"内容涉及违规信息，请修改后重新提交"
             - 不透露具体审核规则或触发条件
             - 不使用"检测到""系统判定"等机器化表述
+
+            description 撰写要求（仅通过时填写，不适用时返回空字符串）：
+            - 内容对应语言的摘要，1-3 句，60-200 字
+            - 覆盖文章主题与核心观点，不要罗列目录
+            - 不使用 Markdown、引用符号或标题
+            - 不出现广告、引流、敏感信息
+            - 仅输出摘要正文
             """)
     @UserMessage("{{content}}")
     ReviewResult review(String content);

@@ -29,6 +29,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PostReviewService {
 
+    private static final int DESCRIPTION_MAX_LENGTH = 512;
+
     private final PostMapper postMapper;
     private final StorageService storageService;
     private final OssProperties ossProperties;
@@ -64,10 +66,13 @@ public class PostReviewService {
         String content = storageService.getContent(ossProperties.getPrivateBucket(), post.getContentUrl());
 
         ReviewResult reviewResult = review(postId, content);
+        boolean approved = Boolean.TRUE.equals(reviewResult.getApproved());
+        String description = StrUtil.trimToEmpty(reviewResult.getDescription());
+        description = description.substring(0, Math.min(description.length(), DESCRIPTION_MAX_LENGTH));
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (reviewResult.getApproved()) {
+        if (approved) {
             // TODO: 添加 index；
             // TODO: 清理未使用的资源 cleanUnusedResources(postId, message.getImgUrls())
             String version = post.getContentUrl().substring(post.getContentUrl().lastIndexOf('/') + 1).replace(".md", "");
@@ -79,6 +84,7 @@ public class PostReviewService {
                 destKey = UploadScene.POST_IMAGE.getPublicPath(String.valueOf(postId));
                 storageService.copyPublicObject(sourceKey, destKey);
             }
+            post.setDescription(description);
             post.setPublishedVersion(version);
             post.setUpdatedAt(now);
             post.setPublishedAt(now);
@@ -95,13 +101,13 @@ public class PostReviewService {
     private ReviewResult review(Long postId, String content) {
         if (contentReviewer == null) {
             log.info("AI 审核未启用，默认通过: postId={}", postId);
-            return new ReviewResult(Boolean.TRUE, null);
+            return new ReviewResult(Boolean.TRUE, "", "");
         }
         try {
             return contentReviewer.review(content);
         } catch (Exception e) {
             log.error("AI 审核异常，默认通过: postId={}", postId);
-            return new ReviewResult(Boolean.TRUE, null);
+            return new ReviewResult(Boolean.TRUE, "", "");
         }
     }
 }
