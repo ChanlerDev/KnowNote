@@ -33,7 +33,7 @@ public class VerifyCodeService {
     @Value("${resend.api-key:}")
     private String resendApiKey;
 
-    @Value("${resend.from:noreply@knownote.dev}")
+    @Value("${resend.from:}")
     private String fromEmail;
 
     private static final String CODE_PREFIX = "verify_code:";

@@ -207,6 +207,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostVersionRespDTO getVersions(Long postId) {
+        PostDO post = getPostByOwner(postId);
+
         String prefix = "posts/" + postId + "/versions/";
         List<S3Object> objects = storageService.listObjects(prefix);
 
