@@ -1,11 +1,10 @@
-package dev.chanler.knownote.post.service.Impl;
+package dev.chanler.knownote.post.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import dev.chanler.knownote.common.BizException;
 import dev.chanler.knownote.common.ErrorCode;
 import dev.chanler.knownote.common.UserContext;
@@ -19,6 +18,8 @@ import dev.chanler.knownote.post.domain.entity.PostDO;
 import dev.chanler.knownote.post.domain.enums.PostStatus;
 import dev.chanler.knownote.post.domain.enums.PostType;
 import dev.chanler.knownote.post.domain.mapper.PostMapper;
+import dev.chanler.knownote.post.mq.PostReviewMessage;
+import dev.chanler.knownote.post.mq.PostReviewProducer;
 import dev.chanler.knownote.post.service.PostService;
 import dev.chanler.knownote.storage.domain.enums.UploadScene;
 import dev.chanler.knownote.storage.service.StorageService;
@@ -42,6 +43,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
     private final StorageService storageService;
+    private final PostReviewProducer postReviewProducer;
 
     @Override
     public CreatePostRespDTO createPost() {
@@ -146,35 +148,8 @@ public class PostServiceImpl implements PostService {
         post.setUpdatedAt(LocalDateTime.now());
         postMapper.updateById(post);
 
-        // TODO: 使用 MQ 异步审核；
-        // 提交审核任务，通过后，设置 content.md 以及 cover.webp 并设置 PUBLISHED 以及 publishedAt 和 published_version
-        // 同时清除无引用图片
-
-        Boolean isApproved = true;
-        LocalDateTime now = LocalDateTime.now();
-
-        if (isApproved) {
-            // TODO: 添加 index；清除无引用图片
-            String version = post.getContentUrl().substring(post.getContentUrl().lastIndexOf('/') + 1).replace(".md", "");
-            String sourceKey = post.getContentUrl();
-            String destKey = UploadScene.POST_CONTENT.getPublicPath(String.valueOf(postId));
-            storageService.copyToPublic(sourceKey, destKey);
-            if (!StrUtil.isBlank(post.getCoverUrl())) {
-                sourceKey = post.getCoverUrl();
-                destKey = UploadScene.POST_IMAGE.getPublicPath(String.valueOf(postId));
-                storageService.copyPublicObject(sourceKey, destKey);
-            }
-            post.setPublishedVersion(version);
-            post.setUpdatedAt(now);
-            post.setPublishedAt(now);
-            post.setStatus(PostStatus.PUBLISHED);
-        } else {
-            // TODO: 清除无引用图片
-            post.setStatus(StrUtil.isBlank(post.getPublishedVersion()) ? PostStatus.DRAFT : PostStatus.PUBLISHED);
-            post.setRejectReason("内容不符合发布规范");
-            post.setUpdatedAt(now);
-        }
-        postMapper.updateById(post);
+        PostReviewMessage message = BeanUtil.copyProperties(post, PostReviewMessage.class);
+        postReviewProducer.sendReviewMessage(message);
     }
 
     @Override
