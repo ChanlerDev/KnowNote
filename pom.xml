@@ -73,6 +73,18 @@
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>2.3.1</version>
         </dependency>
+        <!-- Langchain4j：构建 LLM 驱动的应用程序 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <!-- Langchain4j OpenAI 集成 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+            <version>1.8.0</version>
+        </dependency>
         <!-- MySQL 驱动 -->
         <dependency>
             <groupId>com.mysql</groupId>

@@ -26,6 +26,19 @@ jwt:
   expiration: 900000
   refresh-expiration: 604800000
 
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:}
+  producer:
+    group: knownote-producer
+  consumer:
+    group: knownote-consumer
+
+review-ai:
+  base-url: ${REVIEW_AI_BASE_URL:}
+  api-key: ${REVIEW_AI_API_KEY:}
+  model: ${REVIEW_AI_MODEL:}
+  enabled: true
+
 oss:
   endpoint: ${OSS_ENDPOINT:}
   public-url: ${OSS_PUBLIC_URL:}

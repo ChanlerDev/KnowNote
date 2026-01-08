@@ -61,9 +61,17 @@ public enum UploadScene {
 
     public String getPublicPath(String resourceId) {
         return switch (this) {
-            case POST_IMAGE -> "posts/" + resourceId + "/cover.webp";
             case USER_AVATAR -> null;
             case POST_CONTENT -> "posts/" + resourceId + "/content.md";
+            case POST_IMAGE -> "posts/" + resourceId + "/cover.webp";
+        };
+    }
+
+    public String getPrefix(String resourceId) {
+        return switch (this) {
+            case USER_AVATAR -> "users/" + resourceId + "/avatar/";
+            case POST_CONTENT -> "posts/" + resourceId + "/versions/";
+            case POST_IMAGE -> "posts/" + resourceId + "/images/";
         };
     }
 }

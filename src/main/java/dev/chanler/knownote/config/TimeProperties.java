@@ -4,6 +4,7 @@ import lombok.Data;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 
@@ -11,7 +12,7 @@ import java.time.ZoneId;
  * 时间相关配置
  */
 @Data
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "time")
 public class TimeProperties {
 

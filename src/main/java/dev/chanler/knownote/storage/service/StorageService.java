@@ -11,6 +11,7 @@ import dev.chanler.knownote.storage.api.dto.req.UploadUrlReqDTO;
 import dev.chanler.knownote.storage.api.dto.resp.UploadUrlRespDTO;
 import dev.chanler.knownote.storage.domain.enums.UploadScene;
 import lombok.RequiredArgsConstructor;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -213,4 +214,22 @@ public class StorageService {
             throw new BizException(ErrorCode.THIRD_PARTY_ERROR, "生成签名 URL 失败");
         }
     }
+
+    /**
+     * 获取 bucket 文件内容
+     */
+    public String getContent(String bucket, String key) {
+        try {
+            GetObjectRequest request = GetObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+            ResponseBytes<GetObjectResponse> response = s3Client.getObjectAsBytes(request);
+            return response.asUtf8String();
+        } catch (Exception e) {
+            throw new BizException(ErrorCode.THIRD_PARTY_ERROR, "获取文件内容失败");
+        }
+    }
+
+
 }
