@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.chanler.knownote.config.TavilyProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.*;
 import org.springframework.stereotype.Component;
+
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,9 +22,7 @@ import java.util.List;
 @Slf4j
 public class TavilyClient {
     private final TavilyProperties tavilyProperties;
-    private final OkHttpClient httpClient = new OkHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final MediaType JSON = MediaType.parse("application/json");
 
     public TavilyResponse search(String query, int maxResults, String topic, boolean includeRawContent) {
         try {
@@ -31,22 +31,20 @@ public class TavilyClient {
             );
 
             String json = objectMapper.writeValueAsString(request);
-            RequestBody body = RequestBody.create(json, JSON);
-
-            Request httpRequest = new Request.Builder()
-                .url(tavilyProperties.getBaseUrl() + "/search")
-                .addHeader("Authorization", "Bearer " + tavilyProperties.getApiKey())
-                .post(body)
-                .build();
 
             log.debug("Tavily search: query='{}', maxResults={}, topic='{}'", query, maxResults, topic);
 
-            try (Response response = httpClient.newCall(httpRequest).execute()) {
-                if (!response.isSuccessful() || response.body() == null) {
-                    log.error("Tavily API failed: code={}", response.code());
+            try (HttpResponse response = HttpRequest.post(tavilyProperties.getBaseUrl() + "/search")
+                .header("Authorization", "Bearer " + tavilyProperties.getApiKey())
+                .header("Content-Type", "application/json")
+                .body(json)
+                .timeout(10_000)
+                .execute()) {
+                if (!response.isOk() || response.body() == null) {
+                    log.error("Tavily API failed: code={}", response.getStatus());
                     return new TavilyResponse(List.of());
                 }
-                return objectMapper.readValue(response.body().string(), TavilyResponse.class);
+                return objectMapper.readValue(response.body(), TavilyResponse.class);
             }
         } catch (IOException e) {
             log.error("Tavily search failed for: {}", query, e);

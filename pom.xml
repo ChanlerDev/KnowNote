@@ -109,12 +109,6 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.34</version>
         </dependency>
-        <!-- OkHttp：Tavily API 调用 -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
-        </dependency>
         <!-- AWS SDK for Java：S3 兼容的对象存储（Cloudflare R2） -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
