@@ -103,11 +103,6 @@ public class PostReviewService {
             log.info("AI 审核未启用，默认通过: postId={}", postId);
             return new ReviewResult(Boolean.TRUE, "", "");
         }
-        try {
-            return contentReviewer.review(content);
-        } catch (Exception e) {
-            log.error("AI 审核异常，默认通过: postId={}", postId);
-            return new ReviewResult(Boolean.TRUE, "", "");
-        }
+        return contentReviewer.review(content);
     }
 }
