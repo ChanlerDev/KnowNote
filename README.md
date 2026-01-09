@@ -24,7 +24,7 @@ flowchart TB
     subgraph Backend[后端服务]
         API[REST API]
         SSE[SSE Hub]
-        Queue[ResearchTaskExecutor<br/>@QueuedAsync]
+        Queue[ResearchTaskExecutor]
         Pipeline[AgentPipeline]
         MQ[RocketMQ]
         Review[PostReviewService]
@@ -46,7 +46,7 @@ flowchart TB
     end
 
     FE -->|HTTP| API
-    FE <-->|SSE| SSE
+    FE ---|SSE| SSE
     FE -->|预签名直传| R2
     API --> Queue
     API --> MQ
